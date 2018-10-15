@@ -1,0 +1,2 @@
+<!--pages/auxiliary/valuation.wxml-->
+<text catchtap="catchProductIntrTap">产品介绍</text>
