@@ -112,10 +112,10 @@ function userLoginFromShow(global_info, code, page) {
       else {
         if (res.data['msg'])
           util_handle.showModalSingleButtonAndExit('使用提示', res.data['msg'])
-        else
+        else{
           util_handle.showLoginFailToast()
-
-        show_flag -= 1
+          show_flag -= 1
+        }
       }
     },
     fail: function (res) {
@@ -553,6 +553,129 @@ function parcelTrackingInfo(global_info, page) {
   })
 }
 
+/**
+ * 获取最新的汇率
+ */
+function getLastExchangeRate(global_info, page, date, currency, to_currency="CNY") {
+  console.log("getLastExchangeRate start")
+
+  var show_flag = 0
+  wx.showLoading({
+    title: "处理中",
+    mask: true
+  })
+  show_flag += 1
+
+  var url = getWebDomain(global_info.env)
+  url += "/wechat/s_program/last_exchange_rate"
+  console.log(url)
+
+  wx.request({
+    url: url,
+    data: {
+      currency: currency,
+      to_currency: to_currency
+    },
+    header: {
+      'content-type': 'application/json',
+      'content-env': global_info.env,
+      'content-uid': global_info.uid
+    },
+    dataType: "json",
+    success: function (res) {
+      if (res.data['status'] == 'succ') {
+        page.setData({
+          "exchange_rate.data": date,
+          "exchange_rate.rate": res.data['rate']
+        })
+
+        wx.clearStorageSync()
+        wx.setStorage({
+          key: date,
+          data: res.data['rate']
+        })
+      }
+      else {
+        util_handle.showFailToast("汇率获取失败,请稍后重试", 2000)
+        show_flag -= 1
+      }
+    },
+    fail: function (res) {
+      console.log("getLastExchangeRate request.fail:")
+      console.log(res)
+      util_handle.showFailToast("汇率获取失败,请稍后重试", 2000)
+      show_flag -= 1
+    },
+    complete: function (res) {
+      if (show_flag >= 1)
+        wx.hideLoading()
+    }
+  })
+}
+
+
+/**
+ * 获取计价结果
+ */
+function getValuation(global_info, page, form) {
+  console.log("getValuation start")
+
+  var show_flag = 0
+  wx.showLoading({
+    title: "计价中",
+    mask: true
+  })
+  show_flag += 1
+
+  var url = getWebDomain(global_info.env)
+  url += "/wechat/s_program/calc_price"
+  console.log(url)
+
+  wx.request({
+    url: url,
+    method: "POST",
+    data: {
+      product_type: page.data.products_type,
+      sender_country: page.data.page_display.sender_country_arr[form.sender_country_index],
+      rcpt_country: page.data.page_display.rcpt_country_arr[form.rcpt_country_index],
+      length: form.length,
+      width: form.width,
+      height: form.height,
+      weight: form.weight,
+      currency: page.data.page_display.currency_arr[form.currency_index]
+    },
+    header: {
+      'content-type': 'application/json',
+      'content-env': global_info.env,
+      'content-uid': global_info.uid
+    },
+    dataType: "json",
+    success: function (res) {
+      if (res.data['status'] == 'succ') {
+        page.setData({
+          products_info: res.data["price_arr"]
+        })
+
+        console.log(page.data.products_info)
+      }
+      else {
+        util_handle.showFailToast("计价异常,请稍后重试", 2000)
+        show_flag -= 1
+      }
+    },
+    fail: function (res) {
+      console.log("getValuation request.fail:")
+      console.log(res)
+      util_handle.showFailToast("计价异常,请稍后重试", 2000)
+      show_flag -= 1
+    },
+    complete: function (res) {
+      if (show_flag >= 1)
+        wx.hideLoading()
+    }
+  })
+}
+
 module.exports = {
   userLogin: userLogin,
   download: download,
@@ -561,5 +684,7 @@ module.exports = {
   followParcel: followParcel,
   userLoginFromShow: userLoginFromShow,
   parcelInfo: parcelInfo,
-  parcelTrackingInfo: parcelTrackingInfo
+  parcelTrackingInfo: parcelTrackingInfo,
+  getLastExchangeRate: getLastExchangeRate,
+  getValuation: getValuation
 }

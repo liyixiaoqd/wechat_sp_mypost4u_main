@@ -5,7 +5,6 @@ const util_handle = require('utils/handle.js');
 const env = "production";
 const id_type = "mypost4u_main";
 
-
 App({
   globalData: {
     env: env,
