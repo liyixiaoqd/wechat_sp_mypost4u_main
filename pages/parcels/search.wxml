@@ -1,6 +1,6 @@
 <template name="search">
 
-<view class="sm_top">
+<view class="sm_top" catchtouchmove="catchTouchStopMove">
 
   <view class="search_display">
     <form class="search_form" bindsubmit="bindSearch">

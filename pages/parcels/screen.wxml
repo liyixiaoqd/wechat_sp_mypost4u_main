@@ -1,6 +1,6 @@
 <template name="screen">
 
-<view class="sm_top">
+<view class="sm_top" catchtouchmove="catchTouchStopMove">
 
   <view class="sm_display">
     <text class="sm_text">创建日期</text>

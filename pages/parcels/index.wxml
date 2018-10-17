@@ -11,7 +11,7 @@
   <template is="search" data="{{search_display: search_display}}"/>
 </view>
 
-<view class="container" catchtap="catchContainerTap">
+<view class="container" catchtap="catchContainerTap" catchtouchmove="{{(hidden_flag.search==false || hidden_flag.screen==false) ? 'catchTouchStopMove':''}}">
   <view class="title_view">
     <image class="title_image" src="{{page_display.title_image_src}}" mode='aspectFit'></image>
     <view>

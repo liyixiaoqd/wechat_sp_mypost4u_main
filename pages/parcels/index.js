@@ -346,5 +346,11 @@ Page({
       //     wx.hideLoading()
       // }
     })
+  },
+
+  /**
+   * 弹出页面时,禁止用户上下滑动
+   */
+  catchTouchStopMove: function(e){
   }
 })
