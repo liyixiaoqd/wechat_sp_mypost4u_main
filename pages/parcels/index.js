@@ -17,6 +17,7 @@ Page({
       search: true,
       screen: true,
       conflict: false,
+      to_top_png: true,
     },
     page_display:{
       input_width: "",
@@ -28,6 +29,9 @@ Page({
       follow_image_src: "../../resources/follow.png",
       no_follow_image_src: "../../resources/no_follow.png",
       download_image_src: "../../resources/download.png",
+      mobile_height: 666.66,
+      mobile_width: 500.11,
+      to_top_image_src: "../../resources/to_top.png",
     },
     sm_display:{
       btn_disabled: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -112,6 +116,20 @@ Page({
         }
       })
     }
+
+    if (this.data.page_display.mobile_height == 666.66){
+      var _this = this
+      wx.getSystemInfo({
+        success: function(res) {
+          if (res.windowHeight>400){
+            _this.setData({
+              "page_display.mobile_height": res.windowHeight,
+              "page_display.mobile_width": res.windowWidth
+            })
+          }
+        }
+      })
+    }
   },
 
   /**
@@ -140,7 +158,14 @@ Page({
    * 页面滚动函数
    */
   onPageScroll: function (e) {    // Do something when page scroll
-    console.log("into onPageScroll" + e.scrollTop)
+    if (e.scrollTop > this.data.page_display.mobile_height) {
+      if (this.data.hidden_flag.to_top_png == true)
+        this.setData({"hidden_flag.to_top_png": false})
+    }
+    else {
+      if (this.data.hidden_flag.to_top_png == false)
+        this.setData({ "hidden_flag.to_top_png": true })
+    }
   },
 
   /**
@@ -352,5 +377,15 @@ Page({
    * 弹出页面时,禁止用户上下滑动
    */
   catchTouchStopMove: function(e){
+  },
+
+  /**
+   * 返回顶部
+   */
+  catchToTopTap: function(e){
+    wx.pageScrollTo({
+      scrollTop: 0,
+      duration: 300
+    })
   }
 })

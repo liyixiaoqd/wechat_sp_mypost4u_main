@@ -3,6 +3,8 @@
 <import src="screen.wxml"/>
 <import src="search.wxml"/>
 
+<image class="to_top_image" src="{{page_display.to_top_image_src}}" mode='aspectFit' hidden="{{hidden_flag.to_top_png}}" catchtap="catchToTopTap"></image>
+
 <view hidden='{{hidden_flag.screen}}'>
   <template is="screen" data="{{sm_display: sm_display}}"/>
 </view>
